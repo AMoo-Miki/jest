@@ -166,6 +166,7 @@ export type InitialOptions = Partial<{
   extraGlobals: Array<string>;
   filter: Path;
   findRelatedTests: boolean;
+  flakyTestRetries: number;
   forceCoverageMatch: Array<Glob>;
   forceExit: boolean;
   json: boolean;
@@ -304,6 +305,7 @@ export type GlobalConfig = {
   expand: boolean;
   filter?: Path;
   findRelatedTests: boolean;
+  flakyTestRetries?: number;
   forceExit: boolean;
   json: boolean;
   globalSetup?: string;
@@ -435,6 +437,7 @@ export type Argv = Arguments<
     env: string;
     expand: boolean;
     findRelatedTests: boolean;
+    flakyTestRetries: number | null | undefined;
     forceExit: boolean;
     globals: string;
     globalSetup: string | null | undefined;

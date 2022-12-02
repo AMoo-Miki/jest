@@ -98,7 +98,7 @@ export interface ItConcurrent extends It {
 }
 
 export interface DescribeBase {
-  (blockName: BlockName, blockFn: BlockFn): void;
+  (blockName: BlockName, blockFn: BlockFn, flakyTestRetries?: number): void;
   each: Each<BlockFn>;
 }
 

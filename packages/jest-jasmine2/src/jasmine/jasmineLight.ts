@@ -44,6 +44,7 @@ export const create = function (createOptions: Record<string, any>): Jasmine {
   const j$ = {...createOptions} as Jasmine;
 
   j$._DEFAULT_TIMEOUT_INTERVAL = createOptions.testTimeout || 5000;
+  j$.flakyTestRetries = createOptions.flakyTestRetries || 0;
 
   j$.getEnv = function () {
     const env = (j$.currentEnv_ = j$.currentEnv_ || new j$.Env());
@@ -66,16 +67,16 @@ export const create = function (createOptions: Record<string, any>): Jasmine {
 // Interface is a reserved word in strict mode, so can't export it as ESM
 export const _interface = function (jasmine: Jasmine, env: any) {
   const jasmineInterface = {
-    describe(description: string, specDefinitions: SpecDefinitionsFn) {
-      return env.describe(description, specDefinitions);
+    describe(description: string, specDefinitions: SpecDefinitionsFn, flakyTestRetries?: number) {
+      return env.describe(description, specDefinitions, flakyTestRetries);
     },
 
-    xdescribe(description: string, specDefinitions: SpecDefinitionsFn) {
-      return env.xdescribe(description, specDefinitions);
+    xdescribe(description: string, specDefinitions: SpecDefinitionsFn, flakyTestRetries?: number) {
+      return env.xdescribe(description, specDefinitions, flakyTestRetries);
     },
 
-    fdescribe(description: string, specDefinitions: SpecDefinitionsFn) {
-      return env.fdescribe(description, specDefinitions);
+    fdescribe(description: string, specDefinitions: SpecDefinitionsFn, flakyTestRetries?: number) {
+      return env.fdescribe(description, specDefinitions, flakyTestRetries);
     },
 
     it() {

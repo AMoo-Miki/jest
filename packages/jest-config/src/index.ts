@@ -133,6 +133,7 @@ const groupOptions = (
     expand: options.expand,
     filter: options.filter,
     findRelatedTests: options.findRelatedTests,
+    flakyTestRetries: options.flakyTestRetries,
     forceExit: options.forceExit,
     globalSetup: options.globalSetup,
     globalTeardown: options.globalTeardown,

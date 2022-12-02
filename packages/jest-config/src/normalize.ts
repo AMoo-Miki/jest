@@ -944,6 +944,16 @@ export default async function normalize(
         }
         break;
       }
+      case 'flakyTestRetries': {
+        if (oldOptions[key] < 0) {
+          throw createConfigError(
+            `  Option "${chalk.bold('flakyTestRetries')}" must be a natural number.`,
+          );
+        }
+
+        value = oldOptions[key];
+        break;
+      }
       case 'testTimeout': {
         if (oldOptions[key] < 0) {
           throw createConfigError(

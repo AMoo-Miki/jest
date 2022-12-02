@@ -56,6 +56,7 @@ export type Attributes = {
   onStart: (context: Spec) => void;
   getSpecName: (spec: Spec) => string;
   queueRunnerFactory: typeof queueRunner;
+  flakyTestRetries: number;
 };
 
 export type SpecResult = {
@@ -96,6 +97,9 @@ export default class Spec {
   markedPending?: boolean;
   expand?: boolean;
 
+  remainingRetriesCount: number;
+  executionsAttempted: number = 0;
+
   static pendingSpecExceptionMessage: string;
 
   static isPendingSpecException(e: Error) {
@@ -132,6 +136,8 @@ export default class Spec {
 
     this.initError = new Error();
     this.initError.name = '';
+
+    this.remainingRetriesCount = attrs.flakyTestRetries;
 
     // Without this line v8 stores references to all closures
     // in the stack in the Error object. This line stringifies the stack
@@ -170,10 +176,10 @@ export default class Spec {
     }
   }
 
-  execute(onComplete?: () => void, enabled?: boolean) {
+  execute(onComplete?: () => void, enabled?: boolean, beingRetried?: boolean) {
     const self = this;
 
-    this.onStart(this);
+    if (!beingRetried) this.onStart(this);
 
     if (
       !this.isExecutable() ||
@@ -184,6 +190,8 @@ export default class Spec {
       complete(enabled);
       return;
     }
+
+    this.executionsAttempted++;
 
     const fns = this.beforeAndAfterFns();
     const allFns = fns.befores.concat(this.queueableFn).concat(fns.afters);
@@ -204,6 +212,18 @@ export default class Spec {
 
     function complete(enabledAgain?: boolean) {
       self.result.status = self.status(enabledAgain);
+
+      if (self.result.status === 'failed') {
+        const hadTimeouts = self.result.failedExpectations.some(({ message }: FailedAssertion) => message?.includes('Timeout - Async callback'));
+        if (hadTimeouts && self.remainingRetriesCount-- > 0) {
+          self.result.passedExpectations = [];
+          self.result.failedExpectations = [];
+
+          self.result.description = `${self.description} [Attempt #${1 + self.executionsAttempted}]`;
+          return self.execute(onComplete, enabled, true);
+        }
+      }
+
       self.resultCallback(self.result);
 
       if (onComplete) {

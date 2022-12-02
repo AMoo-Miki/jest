@@ -71,6 +71,7 @@ export default function jasmineEnv(j$: Jasmine) {
     fdescribe: (
       description: string,
       specDefinitions: SpecDefinitionsFn,
+      flakyTestRetries?: number,
     ) => Suite;
     spyOn: (
       obj: Record<string, Spy>,
@@ -88,6 +89,7 @@ export default function jasmineEnv(j$: Jasmine) {
     xdescribe: (
       description: string,
       specDefinitions: SpecDefinitionsFn,
+      flakyTestRetries?: number,
     ) => Suite;
     xit: (description: string, fn: QueueableFn['fn'], timeout?: number) => Spec;
     beforeAll: (beforeAllFunction: QueueableFn['fn'], timeout?: number) => void;
@@ -97,6 +99,7 @@ export default function jasmineEnv(j$: Jasmine) {
     describe: (
       description: string,
       specDefinitions: SpecDefinitionsFn,
+      flakyTestRetries?: number,
     ) => Suite;
 
     constructor() {
@@ -366,7 +369,7 @@ export default function jasmineEnv(j$: Jasmine) {
         return spyRegistry.spyOn.apply(spyRegistry, args);
       };
 
-      const suiteFactory = function (description: string) {
+      const suiteFactory = function (description: string, flakyTestRetries?: number) {
         const suite = new j$.Suite({
           id: getNextSuiteId(),
           description,
@@ -375,13 +378,14 @@ export default function jasmineEnv(j$: Jasmine) {
           getTestPath() {
             return j$.testPath;
           },
+          flakyTestRetries: flakyTestRetries || currentDeclarationSuite.flakyTestRetries,
         });
 
         return suite;
       };
 
-      this.describe = function (description: string, specDefinitions) {
-        const suite = suiteFactory(description);
+      this.describe = function (description: string, specDefinitions, flakyTestRetries?: number) {
+        const suite = suiteFactory(description, flakyTestRetries);
         if (specDefinitions === undefined) {
           throw new Error(
             'Missing second argument. It must be a callback function.',
@@ -514,6 +518,7 @@ export default function jasmineEnv(j$: Jasmine) {
             },
           },
           throwOnExpectationFailure,
+          flakyTestRetries: suite.flakyTestRetries || j$.flakyTestRetries,
         });
 
         if (!this.specFilter(spec)) {

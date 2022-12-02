@@ -269,6 +269,10 @@ export const options = {
       'the minimal amount of tests necessary.',
     type: 'boolean',
   },
+  flakyTestRetries: {
+    description: 'This option sets the default number of retries for test cases.',
+    type: 'number',
+  },
   forceExit: {
     description:
       'Force Jest to exit after all tests have completed running. ' +

@@ -39,6 +39,7 @@ export default async function jasmine2(
     process,
     testPath,
     testTimeout: globalConfig.testTimeout,
+    flakyTestRetries: globalConfig.flakyTestRetries,
   });
 
   const env = jasmine.getEnv();

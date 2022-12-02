@@ -53,6 +53,7 @@ export type Attributes = {
   description: string;
   throwOnExpectationFailure?: boolean;
   getTestPath: () => Config.Path;
+  flakyTestRetries?: number;
 };
 
 export default class Suite {
@@ -71,6 +72,7 @@ export default class Suite {
   markedPending: boolean;
   markedTodo: boolean;
   isFocused: boolean;
+  flakyTestRetries?: number;
 
   constructor(attrs: Attributes) {
     this.markedPending = false;
@@ -80,6 +82,7 @@ export default class Suite {
     this.parentSuite = attrs.parentSuite;
     this.description = convertDescriptorToString(attrs.description);
     this.throwOnExpectationFailure = !!attrs.throwOnExpectationFailure;
+    this.flakyTestRetries = attrs.flakyTestRetries;
 
     this.beforeFns = [];
     this.afterFns = [];

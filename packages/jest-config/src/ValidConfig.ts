@@ -51,6 +51,7 @@ const initialOptions: Config.InitialOptions = {
   extensionsToTreatAsEsm: [],
   extraGlobals: [],
   filter: '<rootDir>/filter.js',
+  flakyTestRetries: 0,
   forceCoverageMatch: ['**/*.t.js'],
   forceExit: false,
   globalSetup: 'setup.js',

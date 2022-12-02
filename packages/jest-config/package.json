@@ -1,5 +1,5 @@
 {
-  "name": "jest-config",
+  "name": "@amoo-miki/jest-config",
   "version": "27.5.1",
   "repository": {
     "type": "git",
